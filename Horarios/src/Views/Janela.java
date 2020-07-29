@@ -1,6 +1,8 @@
 package Views;
 
 import java.awt.Color;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.text.ParseException;
 import java.util.ArrayList;
 
@@ -19,11 +21,11 @@ import Model.Horario;
 import Services.Controler;
 import Services.OuvinteLimparHorarios;
 import Services.OuvinteLimparMarcacoes;
+import Services.OuvinteLimparTabelaHorario;
 import Services.OuvinteLimparTabelas;
 import Services.OuvinteSubmeter;
 import Services.OuvinteSubmeterMarcacao;
 import Services.OuvinteVerificarAtrasos;
-import Services.OuvinteVerificarHorasExtras;
 
 public class Janela extends JFrame {
 	
@@ -49,26 +51,30 @@ public class Janela extends JFrame {
 	}
 	
 	public void definicoes() throws ParseException {
+		Evento evento = new Evento();
 		setVisible(true);
 		setSize(700, 550);
 		setTitle("Projeto Horários");
 		setResizable(false);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(null);
-		getContentPane().setBackground(Color.LIGHT_GRAY);
+		getContentPane().setBackground(Color.BLACK);
 		repaint();
 		
 		JLabel label = new JLabel("Horário de trabalho");
+		label.setForeground(Color.WHITE);
 		label.setBounds(110, 21, 149, 14);
 		getContentPane().add(label);
 		repaint();
 		
 		JLabel lblentrada = new JLabel("Entrada");
+		lblentrada.setForeground(Color.WHITE);
 		lblentrada.setBounds(20, 46, 101, 14);
 		getContentPane().add(lblentrada);
 		repaint();
 		
 		JLabel lblSaida = new JLabel("Saída");
+		lblSaida.setForeground(Color.WHITE);
 		lblSaida.setBounds(20, 74, 101, 14);
 		getContentPane().add(lblSaida);
 		repaint();
@@ -78,7 +84,8 @@ public class Janela extends JFrame {
 		textEntrada = new JFormattedTextField(ent);
 		textEntrada.setBounds(73, 43, 67, 20);
 		getContentPane().add(textEntrada);
-		textEntrada.setColumns(5);
+		//textEntrada.setColumns(5);
+		textEntrada.addKeyListener(evento);
 		repaint();
 
 		textSaida = new JFormattedTextField(ent);
@@ -103,16 +110,19 @@ public class Janela extends JFrame {
 		btnSubmeter.addActionListener(ouvinte);
 		
 		JLabel label2 = new JLabel("Marcações feitas");
+		label2.setForeground(Color.WHITE);
 		label2.setBounds(455, 21, 101, 14);
 		getContentPane().add(label2);
 		repaint();
 		
 		JLabel lblentrada2 = new JLabel("Entrada");
+		lblentrada2.setForeground(Color.WHITE);
 		lblentrada2.setBounds(384, 46, 101, 14);
 		getContentPane().add(lblentrada2);
 		repaint();
 		
 		JLabel lblSaida2 = new JLabel("Saída");
+		lblSaida2.setForeground(Color.WHITE);
 		lblSaida2.setBounds(384, 74, 101, 14);
 		getContentPane().add(lblSaida2);
 		repaint();
@@ -121,6 +131,7 @@ public class Janela extends JFrame {
 		textEntrada2.setColumns(5);
 		textEntrada2.setBounds(444, 43, 67, 20);
 		getContentPane().add(textEntrada2);
+		textEntrada2.addKeyListener(evento);
 		repaint();
 		
 		textSaida2 = new JFormattedTextField(ent);
@@ -146,35 +157,37 @@ public class Janela extends JFrame {
 		repaint();
 		
 		JLabel lblAtraso = new JLabel("Atraso");
+		lblAtraso.setForeground(Color.WHITE);
 		lblAtraso.setBounds(20, 307, 101, 14);
 		getContentPane().add(lblAtraso);
 		repaint();
 		
 		JLabel lblHoraExtra = new JLabel("Hora extra");
+		lblHoraExtra.setForeground(Color.WHITE);
 		lblHoraExtra.setBounds(384, 307, 101, 14);
 		getContentPane().add(lblHoraExtra);
 		repaint();
 		
 		OuvinteVerificarAtrasos ouvinteAtrasos = new OuvinteVerificarAtrasos(this);
-		JButton btnVerificar = new JButton("Verificar");
+		JButton btnVerificar = new JButton("Verificar Atrasos e Extras");
 		btnVerificar.setForeground(Color.BLUE);
-		btnVerificar.setBounds(73, 303, 95, 23);
+		btnVerificar.setBounds(20, 487, 202, 23);
 		getContentPane().add(btnVerificar);
 		btnVerificar.addActionListener(ouvinteAtrasos);
 		repaint();
 		
-		OuvinteVerificarHorasExtras ouvinteVerificarHorasExtras = new OuvinteVerificarHorasExtras(this);
-		JButton verificarHoras = new JButton("Verificar");
+		OuvinteLimparTabelaHorario ouvinteLimparTabelaHorario = new OuvinteLimparTabelaHorario(this);
+		JButton verificarHoras = new JButton("Limpar Tabela Horário");
 		verificarHoras.setForeground(Color.BLUE);
-		verificarHoras.setBounds(477, 303, 95, 23);
+		verificarHoras.setBounds(487, 487, 180, 23);
 		getContentPane().add(verificarHoras);
-		verificarHoras.addActionListener(ouvinteVerificarHorasExtras);
+		verificarHoras.addActionListener(ouvinteLimparTabelaHorario);
 		repaint();
 		
 		OuvinteLimparTabelas ouvinteLimparTabelas = new OuvinteLimparTabelas(this);
 		JButton btnLimparTabelas = new JButton("Limpar tabelas");
 		btnLimparTabelas.setForeground(Color.BLUE);
-		btnLimparTabelas.setBounds(282, 487, 130, 23);
+		btnLimparTabelas.setBounds(290, 487, 130, 23);
 		getContentPane().add(btnLimparTabelas);
 		btnLimparTabelas.addActionListener(ouvinteLimparTabelas);
 		repaint();
@@ -231,7 +244,7 @@ public class Janela extends JFrame {
 		atrasos.setModel(modelo);
 		
 		JScrollPane visivel = new JScrollPane(atrasos);
-		visivel.setBounds(20, 347, 300, 123);
+		visivel.setBounds(20, 332, 300, 123);
 		getContentPane().add(visivel);
 		repaint();
 	}
@@ -279,7 +292,7 @@ public class Janela extends JFrame {
 		atrasos.setModel(modelo);
 		
 		JScrollPane visivel = new JScrollPane(atrasos);
-		visivel.setBounds(376, 347, 291, 123);
+		visivel.setBounds(376, 332, 291, 123);
 		getContentPane().add(visivel);
 		repaint();
 	}
@@ -323,4 +336,36 @@ public class Janela extends JFrame {
 	public void setTextSaida2(JTextField textSaida2) {
 		this.textSaida2 = textSaida2;
 	}
+	
+	private class Evento implements KeyListener {
+		@Override
+		public void keyTyped(KeyEvent e) {
+			// TODO Auto-generated method stub
+		}
+		@Override
+		public void keyPressed(KeyEvent e) {
+			// TODO Auto-generated method stub
+		}
+		@Override
+		public void keyReleased(KeyEvent e) {
+			if ((JTextField)e.getComponent() == textEntrada) {
+				String valor = textEntrada.getText().toString();
+				char valorFinal = valor.charAt(valor.length()-1);
+				if (valorFinal != ' ') {
+					//System.out.println(valorFinal);	
+					textSaida.grabFocus();	
+				}
+			}
+			if ((JTextField)e.getComponent() == textEntrada2) {
+				String valor = textEntrada2.getText().toString();
+				char valorFinal = valor.charAt(valor.length()-1);
+				if (valorFinal != ' ') {
+					//System.out.println(valorFinal);	
+					textSaida2.grabFocus();	
+				}	
+			}
+			
+		}
+    }
+	
 }

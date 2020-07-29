@@ -21,12 +21,12 @@ private Janela janela;
 	public void actionPerformed(ActionEvent e) {
 		PersistenciaXML per = new PersistenciaXML();
 		HorarioDao dao = per.recuperarHorario();
-		ArrayList<Horario> listaDeHorarios = new ArrayList<Horario>();
+		//ArrayList<Horario> listaDeHorarios = new ArrayList<Horario>();
 		ArrayList<Horario> marcacoesFeitas = new ArrayList<Horario>();
 		ArrayList<Horario> atrasos = new ArrayList<Horario>();
 		ArrayList<Horario> extras = new ArrayList<Horario>();
 		
-		dao.setListaDeHorarios(listaDeHorarios);
+		//dao.setListaDeHorarios(listaDeHorarios);
 		dao.setMarcacoesFeitas(marcacoesFeitas);
 		dao.setAtrasos(atrasos);
 		dao.setHorasExtras(extras);

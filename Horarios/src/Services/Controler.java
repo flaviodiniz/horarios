@@ -1,10 +1,7 @@
 package Services;
 
 import java.sql.Time;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 import javax.swing.JOptionPane;
 
@@ -71,6 +68,7 @@ public class Controler {
 	
 	public ArrayList<Horario> subtracaoEntreHorarios(ArrayList<Horario> HorarioDeTrabalho, ArrayList<Horario> marcacoesFeitas){
 		ArrayList<Horario> atrasos = new ArrayList<Horario>();
+		int aux = 0;
 		
 		for (Horario h : HorarioDeTrabalho) {
 			for (Horario m : marcacoesFeitas) {
@@ -81,6 +79,19 @@ public class Controler {
 				
 				if (m.getSaida().before(h.getSaida()) && m.getSaida().after(h.getEntrada())) {
 					Horario atraso = new Horario(m.getSaida(), h.getSaida());
+					atrasos.add(atraso);
+				}
+				
+				if (m.getEntrada().before(h.getEntrada()) && m.getSaida().equals(h.getEntrada())) {
+					Horario atraso = new Horario(m.getSaida(), h.getSaida());
+					atrasos.add(atraso);
+					if (marcacoesFeitas.size() == 1) {
+						aux = 1;
+					}
+				}
+				
+				if (m.getEntrada().before(h.getEntrada()) && m.getSaida().before(h.getEntrada()) && aux == 1)  {
+					Horario atraso = new Horario(h.getEntrada(), h.getSaida());
 					atrasos.add(atraso);
 				}
 				
@@ -105,61 +116,120 @@ public class Controler {
 	}
 	
 	public ArrayList<Horario> diferencaEntreHorarios(ArrayList<Horario> HorarioDeTrabalho, ArrayList<Horario> marcacoesFeitas){
-		ArrayList<Horario> horasExtras = new ArrayList<Horario>();
-		Time aux = null;
-		try {
-			String str = "00:00";
-			SimpleDateFormat formatador = new SimpleDateFormat("HH:mm"); 
-			Date data;
-			data = formatador.parse(str);
-			aux = new Time(data.getTime());
-		} catch (ParseException e) {
-			e.printStackTrace();
-		} 
+		ArrayList<Horario> horasExtras = new ArrayList<Horario>();	
+		Time entrada = null;
+		Time saida = null;
+		int quantidade = 0;
+		int aux = 0;
+		int antes = 0;
 		
 		for (Horario h : HorarioDeTrabalho) {
 			for (Horario m : marcacoesFeitas) {
-				if (m.getEntrada().before(h.getEntrada()) && h.getEntrada().before(m.getSaida())) {
-					Horario horaExtra = new Horario(m.getEntrada(), h.getEntrada());
-					horasExtras.add(horaExtra);
-				}
-				
-				if (m.getSaida().after(h.getSaida()) && m.getEntrada().equals(h.getEntrada())) {
-					Horario horaExtra = new Horario(h.getSaida(), m.getSaida());
-					horasExtras.add(horaExtra);
-				}
-				
-				if (m.getSaida().after(h.getSaida()) && m.getEntrada().before(h.getEntrada()) ) {
-					Horario horaExtra = new Horario(h.getSaida(), m.getSaida());
-					horasExtras.add(horaExtra);
-				}
-				
-				if (m.getSaida().after(h.getSaida()) && m.getEntrada().after(h.getEntrada()) && m.getEntrada().before(h.getSaida()) ) {
-					Horario horaExtra = new Horario(h.getSaida(), m.getSaida());
-					horasExtras.add(horaExtra);
-				}
-				
-//				if (m.getEntrada().before(h.getEntrada()) && m.getSaida().before(h.getEntrada()) && m.getEntrada().after(aux)) {
-//					Horario horaExtra = new Horario(m.getEntrada(), m.getSaida());
-//					horasExtras.add(horaExtra);
-//					aux = h.getSaida();
-//				
-//				}
-				
-				if (h.getEntrada().after(h.getSaida())) {
-					if (m.getEntrada().before(h.getEntrada()) && m.getEntrada().after(h.getSaida())) {
+				/**
+				 * Verifica se a marcacao foi antes e depois do horario
+				 */
+				if (m.getEntrada().before(h.getEntrada()) && m.getSaida().after(h.getSaida())) {
+					if (h.getEntrada().before(m.getSaida()) && quantidade != 0 && aux == 0) {
 						Horario horaExtra = new Horario(m.getEntrada(), h.getEntrada());
+						horasExtras.add(horaExtra);
+						aux = 1;
+					}
+					
+					if (h.getEntrada().before(m.getSaida()) && quantidade == 0) {
+						Horario horaExtra = new Horario(m.getEntrada(), h.getEntrada());
+						horasExtras.add(horaExtra);
+						entrada = h.getSaida();
+						quantidade = 1;
+					}
+		
+					if ( (m.getEntrada().equals(h.getEntrada()) || m.getEntrada().before(h.getEntrada())) && (h.getEntrada().after(entrada) || h.getEntrada().equals(entrada))) {
+						Horario horaExtra = new Horario(h.getSaida(), m.getSaida());
+						horasExtras.add(horaExtra);
+						saida = h.getEntrada();
+					}
+					
+					if (entrada != null && saida != null) {
+						Horario horaExtra = new Horario(entrada, saida);
 						horasExtras.add(horaExtra);
 					}
 					
-//					if (m.getSaida().after(h.getSaida())) {
-//						System.out.println(m.getEntrada());
-//						Horario horaExtra = new Horario(h.getSaida(), m.getSaida());
-//						horasExtras.add(horaExtra);
-//					}
+				/**
+				 * Verifica se a entrada e a saida da marcacao estão antes do horario 	
+				 */
+				} else if (m.getEntrada().before(h.getEntrada()) && m.getSaida().before(h.getEntrada())) {
+					if (antes == 0) {
+						Horario horaExtra = new Horario(m.getEntrada(), m.getSaida());
+						horasExtras.add(horaExtra);
+						antes = 1;
+					}
+				} else {
+					/**
+					 * Verificar se a marcação de encaixa antes do horario de entrada
+					 */ 
+					if (m.getEntrada().before(h.getEntrada()) && h.getEntrada().before(m.getSaida()) && quantidade == 0) {
+						Horario horaExtra = new Horario(m.getEntrada(), h.getEntrada());
+						horasExtras.add(horaExtra);
+						antes = 1;
+					}
+					
+					/**
+					 * Verifica se a marcação se encaixa entre horarios
+					 */
+					if (m.getSaida().equals(h.getEntrada())) {
+						Horario horaExtra = new Horario(entrada, m.getSaida());//verificar se é a marcação da saída
+						if (entrada != null) {					
+							horasExtras.add(horaExtra);
+						}				
+					}
+					
+					if (m.getSaida().after(h.getSaida()) && m.getEntrada().before(h.getEntrada())) {
+						entrada = h.getSaida();
+						aux = 1;
+						quantidade = 1;
+						System.out.println(entrada);
+					}
+					
+					if (m.getEntrada().before(h.getSaida()) && entrada != null && m.getSaida().equals(h.getSaida())) {
+						Horario horaExtra = new Horario(entrada, h.getEntrada());
+						horasExtras.add(horaExtra);
+					}
+					
+					if (m.getSaida().after(h.getEntrada()) && entrada != null && aux == 0) {
+						if (entrada.before(h.getEntrada())) {
+							Horario horaExtra = new Horario(entrada, h.getEntrada());
+							horasExtras.add(horaExtra);	
+						}
+					}
+					
+					/**
+					 * Verifica se a marcação se encaixa depois do horario
+					 */
+					if (m.getSaida().after(h.getSaida()) && m.getEntrada().equals(h.getEntrada()) && aux == 0) {
+						Horario horaExtra = new Horario(h.getSaida(), m.getSaida());
+						horasExtras.add(horaExtra);
+					}
+					
+					if (m.getSaida().after(h.getSaida()) && m.getEntrada().before(h.getEntrada()) ) {
+						Horario horaExtra = new Horario(h.getSaida(), m.getSaida());
+						horasExtras.add(horaExtra);
+					}
+					
+					if (m.getSaida().after(h.getSaida()) && m.getEntrada().after(h.getEntrada()) && m.getEntrada().before(h.getSaida()) ) {
+						Horario horaExtra = new Horario(h.getSaida(), m.getSaida());
+						horasExtras.add(horaExtra);
+					}
+					
+					/**
+					 * Verifica se a marcação se encaixa entre horarios nortunos
+					 */
+					if (h.getEntrada().after(h.getSaida())) {
+						if (m.getEntrada().before(h.getEntrada()) && m.getEntrada().after(h.getSaida())) {
+							Horario horaExtra = new Horario(m.getEntrada(), h.getEntrada());
+							horasExtras.add(horaExtra);
+						}
+					}
 				}
 			}
-			
 		}
 		
 		return horasExtras;

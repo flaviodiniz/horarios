@@ -22,8 +22,8 @@ public class OuvinteVerificarAtrasos implements ActionListener {
 		Controler controler = new Controler();
 		PersistenciaXML per = new PersistenciaXML();
 		HorarioDao dao = per.recuperarHorario();
-		ArrayList<Horario> horariosDeTrabalhos = controler.listarHorariosDeTrabalhos();
-		ArrayList<Horario> marcacoesFeitas = controler.listarMarcacoesFeitas();
+		ArrayList<Horario> horariosDeTrabalhos = dao.getListaDeHorarios();
+		ArrayList<Horario> marcacoesFeitas = dao.getMarcacoesFeitas() ;
 		ArrayList<Horario> atrasos = controler.subtracaoEntreHorarios(horariosDeTrabalhos, marcacoesFeitas);
 		ArrayList<Horario> horasExtras = controler.diferencaEntreHorarios(horariosDeTrabalhos, marcacoesFeitas);
 		

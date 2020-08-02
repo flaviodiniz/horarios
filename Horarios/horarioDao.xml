@@ -1,6 +1,34 @@
 <dao.HorarioDao>
-  <listaDeHorarios/>
-  <marcacoesFeitas/>
-  <atrasos/>
-  <horasExtras/>
+  <listaDeHorarios>
+    <Model.Horario>
+      <entrada>08:00:00</entrada>
+      <saida>12:00:00</saida>
+    </Model.Horario>
+    <Model.Horario>
+      <entrada>14:00:00</entrada>
+      <saida>17:00:00</saida>
+    </Model.Horario>
+  </listaDeHorarios>
+  <marcacoesFeitas>
+    <Model.Horario>
+      <entrada>06:00:00</entrada>
+      <saida>08:00:00</saida>
+    </Model.Horario>
+  </marcacoesFeitas>
+  <atrasos>
+    <Model.Horario>
+      <entrada reference="../../../marcacoesFeitas/Model.Horario/saida"/>
+      <saida reference="../../../listaDeHorarios/Model.Horario/saida"/>
+    </Model.Horario>
+    <Model.Horario>
+      <entrada reference="../../../listaDeHorarios/Model.Horario[2]/entrada"/>
+      <saida reference="../../../listaDeHorarios/Model.Horario[2]/saida"/>
+    </Model.Horario>
+  </atrasos>
+  <horasExtras>
+    <Model.Horario>
+      <entrada reference="../../../marcacoesFeitas/Model.Horario/entrada"/>
+      <saida reference="../../../marcacoesFeitas/Model.Horario/saida"/>
+    </Model.Horario>
+  </horasExtras>
 </dao.HorarioDao>
